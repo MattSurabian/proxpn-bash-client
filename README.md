@@ -4,6 +4,23 @@
 
 The problem with ProXPN is that they don't provide or maintain a Linux client, so Linux users are left to sort out how to securely connect to ProXPN's OpenVPN servers themselves or stop using the service. This repo endeavors to fix that.
 
+```
+$ proxpn
+
+Welcome to the ProXPN OpenVPN Bash Client!
+
+Which exit node would you like to use?
+1) UK             4) Singapore     7) LA           10) Miami
+2) Sweden         5) Dallas        8) NYC          11) Czech
+3) Netherlands    6) BASIC         9) Seattle
+Select an exit node:9
+
+The following command will be run:
+/usr/bin/openvpn --config /etc/proxpn/proxpn.ovpn --remote se1.proxpn.com 443 --auth-user-pass /etc/proxpn/login.conf --auth-nocache
+
+Proceed and connect? [y/n]:
+```
+
 ### Prerequisites
 
 Because this repo is designed to enable secure and private communications, dependencies have been kept to an absolute minimum. All that is required to use this shell script is `openvpn` itself. It's likely your system's package manager knows how to get and install `openvpn`. [More details about installing `openvpn` can be found here](https://openvpn.net/index.php/open-source/documentation/howto.html#install).
