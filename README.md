@@ -23,7 +23,9 @@ Proceed and connect? [y/n]:
 
 ### Prerequisites
 
-Because this repo is designed to enable secure and private communications, dependencies have been kept to an absolute minimum. All that is required to use this shell script is `openvpn` itself. It's likely your system's package manager knows how to get and install `openvpn`. [More details about installing `openvpn` can be found here](https://openvpn.net/index.php/open-source/documentation/howto.html#install).
+Because this repo is designed to enable secure and private communications, dependencies have been kept to an absolute minimum. All that is required to use this shell script is `openvpn` itself, and of course a ProXPN account. 
+
+It's likely your system's package manager knows how to get and install `openvpn` already. [More details about installing `openvpn` can be found here](https://openvpn.net/index.php/open-source/documentation/howto.html#install).
 
 **Debian/Ubuntu**
 
@@ -93,4 +95,7 @@ Bash is notorious for being difficult to read and understand. For this reason th
   1. Call OpenVPN with the configuration file and the selected remote exit node.
     - If the user hasn't provided a credentials file to `openvpn` then they will be prompted for a password.
     - Terminate the VPN tunnel at anytime with control-c.
-    
+
+### Does this work for the free edition of ProXPN?
+
+Yes, but non-paid ProXPN users will only be able to successfully connect to the rate limited `BASIC` exit node.
