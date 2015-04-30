@@ -40,6 +40,19 @@ The simplest way to install OpenVPN in OS X is with [Homebrew](http://brew.sh/)
 brew install openvpn
 ```
 
+### Installing This Script
+
+To use this script clone this repo or download the source from the releases page. The recommendation is to create a `proxpn` directory in `etc` and store the included `proxpn.ovpn` file there. The script should be given execute permissions `chmod +x proxpn` and copied to somewhere in your `$PATH`. The recommendation is to copy the script to `/usr/local/bin` or `/usr/bin`. This should allow you to run the command `proxpn`.
+
+### Authentication Credentials
+
+This script does not handle ProXPN authentication at all. When the user is prompted for their credentials that is coming entirely from `openvpn` itself. If you want to avoid entering your credentials at all you can create a file at `/etc/proxpn/login.conf` with your proxpn username on one line and password on another. Again, this shell script does NOTHING with that file other than point OpenVPN to it. The specification for that file and the `--auth-user-pass` flag can be found in the [OpenVPN documentation](https://openvpn.net/index.php/open-source/documentation/manuals/65-openvpn-20x-manpage.html).
+
+### Usage
+
+The shell script will likely need to be run using `sudo` because it's establishing a VPN connection. You'll notice when installing ProXPN's client software on supported systems it will also request elevated access. While this isn't something to take lightly, the hope is this script is easy enough to digest that you feel confident and secure running it as `sudo`.  To offer piece of mind this script prints the command to STDOUT and requires confirmation from the user before attempting to create an OpenVPN connection. Pass the flag `-y` when calling the command (`proxpn -y`) to avoid being prompted.
+Particularly paranoid users could refuse the connection prompt and instead copy the printed `openvpn` command and run it themselves directly.
+
 ### How does this script work?
 
 Bash is notorious for being difficult to read and understand. For this reason the code has been kept simple, brief, and is liberally commented. The following list describes, in plain English, what this script is doing.
@@ -63,16 +76,4 @@ Bash is notorious for being difficult to read and understand. For this reason th
   1. Call OpenVPN with the configuration file and the selected remote exit node.
     - If the user hasn't provided a credentials file to `openvpn` then they will be prompted for a password.
     - Terminate the VPN tunnel at anytime with control-c.
-
-### Installing This Script
-
-To use this script clone this repo or download the source from the releases page. The recommendation is to create a `proxpn` directory in `etc` and store the included `proxpn.ovpn` file there. The script should be given execute permissions `chmod +x proxpn` and copied to somewhere in your `$PATH`. The recommendation is to copy the script to `/usr/local/bin` or `/usr/bin`. This should allow you to run the command `proxpn`.
-
-### Authentication Credentials
-
-This script does not handle ProXPN authentication at all. When the user is prompted for their credentials that is coming entirely from `openvpn` itself. If you want to avoid entering your credentials at all you can create a file at `/etc/proxpn/login.conf` with your proxpn username on one line and password on another. Again, this shell script does NOTHING with that file other than point OpenVPN to it. The specification for that file and the `--auth-user-pass` flag can be found in the [OpenVPN documentation](https://openvpn.net/index.php/open-source/documentation/manuals/65-openvpn-20x-manpage.html).
-
-### Usage
-
-The shell script will likely need to be run using `sudo` because it's establishing a VPN connection. You'll notice when installing ProXPN's client software on supported systems it will also request elevated access. While this isn't something to take lightly, the hope is this script is easy enough to digest that you feel confident and secure running it as `sudo`.  To offer piece of mind this script prints the command to STDOUT and requires confirmation from the user before attempting to create an OpenVPN connection. Pass the flag `-y` when calling the command (`proxpn -y`) to avoid being prompted.
-Particularly paranoid users could refuse the connection prompt and instead copy the printed `openvpn` command and run it themselves directly.
+    
