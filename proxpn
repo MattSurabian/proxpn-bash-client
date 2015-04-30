@@ -1,0 +1,135 @@
+#!/bin/bash
+# ProXPN OpenVPN Shell Script 
+# If you want to use ProXPN's service but don't want to or are unable
+# to install their software, this script might be what you need.
+# This script relies on an OpenVPN configuration file which can be 
+# extracted from ProXPNs software.
+#
+# Use of this script for any exit nodes other than BASIC requires a
+# paid ProXPN account. The BASIC endpoint is rate limited, and a
+# paid subscription is relatively cheap.
+#
+# Because this command runs a VPN for all your traffic you'll likely
+# have to run it using sudo.
+
+echo -e "\nWelcome to the ProXPN OpenVPN Shell Script!"
+
+OPENVPN=`which openvpn`
+if $OPENVPN > /dev/null; then
+    echo -e "\nOpenVPN not found! It must be installed before proceeding\n"
+    exit
+fi
+
+# By default we prompt the user and ask permission to run the openvpn command
+# if the user passes -y then we assume they want to connect without further prompting
+allow=false
+while getopts ":y" opt; do
+  case $opt in
+    a)
+      echo -e "\n-y detected, OpenVPN will connect automatically if no errors occur.\n"
+      allow=true
+      ;;
+  esac
+done
+
+# Catch control-c signals to make sure we don't lose stty echo
+# if we decide to prematurely quit the script.If stty echo is lost the user
+# won't be able to see what they're typing into the terminal
+# until reset or similar destructive command is issued. It will appear as
+# if the shell is frozen or otherwise broken.
+trap ctrl_c INT
+function ctrl_c() {
+    stty echo
+    echo -e "\nProXPN OpenVPN Shell Script has been force quit. Goodbye.\n"
+    exit
+}
+
+# The recommendation is to write the ovpn file and other configuration
+# information to /etc/proxpn/
+CONF_BASE_PATH=/etc/proxpn/
+CONF_FILE=proxpn.ovpn
+
+# Ensure that the CONF_FILE exists
+declare OPENVPN_CONF
+if [ -e "$CONF_BASE_PATH$CONF_FILE" ]; then
+    OPENVPN_CONF=$CONF_BASE_PATH$CONF_FILE
+else
+    echo -e "ERROR: No OpenVPN configuration file found!"
+    exit
+fi
+
+# By default the user will be prompted for their ProXPN username and password by
+# OpenVPN. To avoid being prompted, an auth file containing two lines with the username
+# on the first line and the password on the second line can be created. The
+# recommendation is to call this file login.conf and store it in $CONF_BASE_PATH.
+# If this file is not found, it will not be used and the user will be prompted
+# for login credentials.
+CREDS_FILE=login.conf
+
+declare AUTH_CREDS
+if [ -e "$CONF_BASE_PATH$CREDS_FILE" ]; then
+    AUTH_CREDS=$CONF_BASE_PATH$CREDS_FILE
+else
+    echo -e "No credentials file found, you will be prompted to login to ProXPN"
+fi
+
+PORT=443
+
+# Hosts provided per ProXPN customer support, spring 2015
+declare -A EXIT_NODES
+EXIT_NODES[Miami]=mfl1.proxpn.com
+EXIT_NODES[NYC]=ny1.proxpn.com
+EXIT_NODES[Dallas]=d1.proxpn.com
+EXIT_NODES[Seattle]=se1.proxpn.com
+EXIT_NODES[LA]=la1.proxpn.com
+EXIT_NODES[Sweden]=swe1.proxpn.com
+EXIT_NODES[UK]=uk1.proxpn.com
+EXIT_NODES[Netherlands]=nl1.proxpn.com
+EXIT_NODES[Czech]=cz1.proxpn.com
+EXIT_NODES[Singapore]=sg1.proxpn.com
+
+# ProXPN basic account exit nodes actually send
+# users to many geo locations so there's no reason
+# to include the Dallas basic exit node too.
+# If however, you prefer it: bd.proxpn.com
+EXIT_NODES[BASIC]=bny1.proxpn.com
+
+declare remote
+
+echo -e "\nWhich exit node would you like to use?"
+
+PS3="Select an exit node:"
+select EXITNODE in ${!EXIT_NODES[@]};
+do
+    if [ ${EXIT_NODES[$EXITNODE]} ]; then
+        remote=${EXIT_NODES[$EXITNODE]}
+    else
+        echo -e "ERROR: Bad selection!"
+        exit
+    fi
+    break
+done
+
+# Store the command we're about to run in a variable and tell the user about it for good measure
+# Use the auth-nocache option to ensure openvpn doesn't attempt to cache auth information in memory
+COMMAND="$OPENVPN --config $OPENVPN_CONF --remote $remote $PORT --auth-user-pass $AUTH_CREDS --auth-nocache"
+
+echo -e "\nThe following command will be run:\n$COMMAND\n"
+
+# If we haven't passed -y then explicitly ask the user if we should run the command
+if [ !$allow ]; then
+    read -p "Proceed and connect? [y/n]:" -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        allow=true
+    else
+        echo -e "\nTerminating by request, you are not connected.\n"
+        exit
+    fi
+fi
+
+# If the user has said it's fine, run the command
+if [ $allow ]; then
+    echo ""
+    $COMMAND
+fi
+
