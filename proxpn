@@ -1,5 +1,7 @@
 #!/bin/bash
-# ProXPN OpenVPN Shell Script 
+# ProXPN OpenVPN Bash Client
+# @see: https://github.com/MattSurabian/proxpn-bash-client/
+#
 # If you want to use ProXPN's service but don't want to or are unable
 # to install their software, this script might be what you need.
 # This script relies on an OpenVPN configuration file which can be 
@@ -12,7 +14,7 @@
 # Because this command runs a VPN for all your traffic you'll likely
 # have to run it using sudo.
 
-echo -e "\nWelcome to the ProXPN OpenVPN Shell Script!"
+echo -e "\nWelcome to the ProXPN OpenVPN Bash Client!"
 
 OPENVPN=`which openvpn`
 if $OPENVPN > /dev/null; then
@@ -40,7 +42,7 @@ done
 trap ctrl_c INT
 function ctrl_c() {
     stty echo
-    echo -e "\nProXPN OpenVPN Shell Script has been force quit. Goodbye.\n"
+    echo -e "\nProXPN OpenVPN Bash Client has been force quit. Goodbye.\n"
     exit
 }
 
