@@ -69,7 +69,7 @@ This script does not handle ProXPN authentication at all. When the user is promp
 
 ### Usage
 
-The shell script will likely need to be run using `sudo` because it's establishing a VPN connection. You'll notice when installing ProXPN's client software on supported systems it will also request elevated access. While this isn't something to take lightly, the hope is this script is easy enough to digest that you feel confident and secure running it as `sudo`.  To offer piece of mind this script prints the command to STDOUT and requires confirmation from the user before attempting to create an OpenVPN connection. Pass the flag `-y` when calling the command (`proxpn -y`) to avoid being prompted.
+The shell script will likely need to be run using `sudo` because it's establishing a VPN connection. You'll notice when installing ProXPN's client software on supported systems it will also request elevated access. While this isn't something to take lightly, the hope is this script is easy enough to digest that you feel confident and secure running it as `sudo`.  To offer peace of mind this script prints the command to STDOUT and requires confirmation from the user before attempting to create an OpenVPN connection. Pass the flag `-y` when calling the command (`proxpn -y`) to avoid being prompted.
 Particularly paranoid users could refuse the connection prompt and instead copy the printed `openvpn` command and run it themselves directly.
 
 ### How does this script work?
