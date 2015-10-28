@@ -10,9 +10,11 @@ $ proxpn
 Welcome to the ProXPN OpenVPN Bash Client!
 
 Which exit node would you like to use?
-1) UK             4) Singapore     7) LA           10) Miami
-2) Sweden         5) Dallas        8) NYC          11) Czech
-3) Netherlands    6) BASIC         9) Seattle
+1) Chicago      5) Dallas   9) NYC        13) Miami
+2) Sweden       6) BASIC    10) Stockholm 14) SanJose
+3) Netherlands  7) London   11) Prague
+4) Singapore    8) LA       12) Seattle
+
 Select an exit node:9
 
 The following command will be run:
