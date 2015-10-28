@@ -79,16 +79,19 @@ PORT=443
 
 # Hosts provided per ProXPN customer support, spring 2015
 declare -A EXIT_NODES
-EXIT_NODES[Miami]=mfl1.proxpn.com
-EXIT_NODES[NYC]=ny1.proxpn.com
 EXIT_NODES[Dallas]=d1.proxpn.com
+EXIT_NODES[NYC]=ny1.proxpn.com
+EXIT_NODES[Miami]=mfl1.proxpn.com
+EXIT_NODES[Chicago]=chi1.proxpn.com
 EXIT_NODES[Seattle]=se1.proxpn.com
 EXIT_NODES[LA]=la1.proxpn.com
-EXIT_NODES[Sweden]=swe1.proxpn.com
-EXIT_NODES[UK]=uk1.proxpn.com
 EXIT_NODES[Netherlands]=nl1.proxpn.com
-EXIT_NODES[Czech]=cz1.proxpn.com
 EXIT_NODES[Singapore]=sg1.proxpn.com
+EXIT_NODES[London]=uk1.proxpn.com
+EXIT_NODES[Prague]=cz1.proxpn.com
+EXIT_NODES[Stockholm]=swe1.proxpn.com
+EXIT_NODES[SanJose]=openvpn-cr.proxpn.com
+EXIT_NODES[Sweden]=swe1.proxpn.com
 
 # ProXPN basic account exit nodes actually send
 # users to many geo locations so there's no reason
