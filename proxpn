@@ -77,7 +77,8 @@ fi
 
 PORT=443
 
-# Hosts provided per ProXPN customer support, spring 2015
+# Hosts obtained from http://proxpn.com/updater/locations-v3.xml
+# and http://proxpn.com/updater/locations-v2.xml
 declare -A EXIT_NODES
 EXIT_NODES[Dallas]=d1.proxpn.com
 EXIT_NODES[NYC]=ny1.proxpn.com
