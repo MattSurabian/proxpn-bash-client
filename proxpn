@@ -18,8 +18,8 @@ echo -e "\nWelcome to the ProXPN OpenVPN Bash Client!"
 
 OPENVPN=`which openvpn`
 if $OPENVPN > /dev/null; then
-    echo -e "\nOpenVPN not found! It must be installed before proceeding\n"
-    exit
+  echo -e "\nOpenVPN not found! It must be installed before proceeding\n"
+  exit
 fi
 
 # By default we prompt the user and ask permission to run the openvpn command
