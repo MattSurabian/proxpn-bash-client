@@ -50,7 +50,7 @@ declare AUTH_CREDS
 if [ -e "$CONF_BASE_PATH$CREDS_FILE" ]; then
     AUTH_CREDS=$CONF_BASE_PATH$CREDS_FILE
 else
-    echo "No credentials file found, you will be prompted by OpenVPN to login to ProXPN"
+    echo "No credentials file found at $CONF_BASE_PATH$CREDS_FILE, you will be prompted by OpenVPN to login to ProXPN"
 fi
 
 # By default automatically connect to ProXPN when running this script
