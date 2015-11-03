@@ -2,8 +2,8 @@
 
 SDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
 
-CONF_BASE_PATH=/etc/proxpn
-CONF_FILE=proxpn.ovpn
+CONF_BASE_PATH="/etc/proxpn";
+CONF_FILE="proxpn.ovpn";
 executableFileName="proxpn";
 executableFilePath="$SDIR/$executableFileName";
 systemInstallPath="/usr/local/bin";
