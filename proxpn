@@ -15,11 +15,17 @@
 # have to run it using sudo.
 
 echo -e "\nWelcome to the ProXPN OpenVPN Bash Client!"
+echo
+
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root in order to successfully apply network route configuration." 
+   exit 1
+fi
 
 OPENVPN=`which openvpn`
 if $OPENVPN > /dev/null; then
-    echo -e "\nOpenVPN not found! It must be installed before proceeding\n"
-    exit
+  echo -e "\nOpenVPN not found! It must be installed before proceeding\n"
+  exit
 fi
 
 # By default we prompt the user and ask permission to run the openvpn command
