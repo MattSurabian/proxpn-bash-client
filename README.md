@@ -59,6 +59,10 @@ The simplest way to install OpenVPN in OS X is with [Homebrew](http://brew.sh/)
 ```
 brew install openvpn
 ```
+**Note:** Mac uses may, upon receiving a build error mentioning not being able to use *unsigned kexts*, have to install another package in order to install openvpn, which can be done with the following command:
+```
+brew install Caskroom/cask/tuntap
+```
 
 ### Installing This Script
 
