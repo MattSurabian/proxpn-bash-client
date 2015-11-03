@@ -55,22 +55,32 @@ fi
 
 # By default automatically connect to ProXPN when running this script
 dryRun=false
+dryRunExitCode=0
 
-if [ $EUID -ne 0 ]; then
+# Check for flags
+while [[ $# > 0 ]]
+do
+key="$1"
+case $key in
+    -dry-run|--dry-run)
+    dryRun=true
+    dryRunExitCode=0
+    echo -e "-dry-run mode active, you will not be automatically connected."
+    ;;
+    *)
+    echo -e "Unknown option: $key \nUsage: proxpn [--dry-run|-dry-run]\n"
+    exit 1
+    ;;
+esac
+shift # past argument or value
+done
+
+if [ $EUID != 0 -a $dryRun != true ]; then
    echo "This script must be run as root in order to successfully apply network route configuration."
    echo "Elevated permissions not detected, falling back to dry-run mode..."
    dryRun=true
+   dryRunExitCode=1
 fi
-
-# If the user does not want to automatically connect to ProXPN they can pass -dry-run
-while getopts ":dry-run" opt; do
-  case $opt in
-    a)
-      echo -e "\n-dry-run mode active, you will not be automatically connected.\n"
-      dryRun=true
-      ;;
-  esac
-done
 
 # Catch control-c signals to make sure we don't lose stty echo
 # if we decide to prematurely quit the script.If stty echo is lost the user
@@ -111,7 +121,7 @@ EXIT_NODES[BASIC]=bny1.proxpn.com
 
 declare remote
 
-echo "Which exit node would you like to use?"
+echo -e "\nWhich exit node would you like to use?"
 
 PS3="Select an exit node:"
 select EXITNODE in ${!EXIT_NODES[@]};
@@ -133,7 +143,7 @@ COMMAND="$OPENVPN --config $OPENVPN_CONF --remote $remote $PORT --auth-user-pass
 if [ $dryRun = true ]; then
     echo -e "\nDry run comeplete!"
     echo -e "Use following OpenVPN command to connect to ProXPN :\n$COMMAND\n"
-    exit 0
+    exit $dryRunExitCode
 fi
 
 echo -e "Running: \n$COMMAND\n"
