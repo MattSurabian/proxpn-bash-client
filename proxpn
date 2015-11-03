@@ -11,46 +11,18 @@
 # paid ProXPN account. The BASIC endpoint is rate limited, and a
 # paid subscription is relatively cheap.
 #
-# Because this command runs a VPN for all your traffic you'll likely
-# have to run it using sudo.
+# Because this command runs a VPN for all your traffic you'll have to
+# run it using sudo. If it is not run with sudo it will automatically use
+# dry-run mode.
 
 echo -e "\nWelcome to the ProXPN OpenVPN Bash Client!"
 echo
 
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root in order to successfully apply network route configuration." 
-   exit 1
-fi
-
 OPENVPN=`which openvpn`
 if $OPENVPN > /dev/null; then
   echo -e "\nOpenVPN not found! It must be installed before proceeding\n"
-  exit
+  exit 1
 fi
-
-# By default we prompt the user and ask permission to run the openvpn command
-# if the user passes -y then we assume they want to connect without further prompting
-allow=false
-while getopts ":y" opt; do
-  case $opt in
-    a)
-      echo -e "\n-y detected, OpenVPN will connect automatically if no errors occur.\n"
-      allow=true
-      ;;
-  esac
-done
-
-# Catch control-c signals to make sure we don't lose stty echo
-# if we decide to prematurely quit the script.If stty echo is lost the user
-# won't be able to see what they're typing into the terminal
-# until reset or similar destructive command is issued. It will appear as
-# if the shell is frozen or otherwise broken.
-trap ctrl_c INT
-function ctrl_c() {
-    stty echo
-    echo -e "\nProXPN OpenVPN Bash Client has been force quit. Goodbye.\n"
-    exit
-}
 
 # The recommendation is to write the ovpn file and other configuration
 # information to /etc/proxpn/
@@ -62,8 +34,8 @@ declare OPENVPN_CONF
 if [ -e "$CONF_BASE_PATH$CONF_FILE" ]; then
     OPENVPN_CONF=$CONF_BASE_PATH$CONF_FILE
 else
-    echo -e "ERROR: No OpenVPN configuration file found!"
-    exit
+    echo "ERROR: No OpenVPN configuration file found at $CONF_BASE_PATH$CONF_FILE!"
+    exit 1
 fi
 
 # By default the user will be prompted for their ProXPN username and password by
@@ -78,8 +50,39 @@ declare AUTH_CREDS
 if [ -e "$CONF_BASE_PATH$CREDS_FILE" ]; then
     AUTH_CREDS=$CONF_BASE_PATH$CREDS_FILE
 else
-    echo -e "No credentials file found, you will be prompted to login to ProXPN"
+    echo "No credentials file found, you will be prompted by OpenVPN to login to ProXPN"
 fi
+
+# By default automatically connect to ProXPN when running this script
+dryRun=false
+
+if [ $EUID -ne 0 ]; then
+   echo "This script must be run as root in order to successfully apply network route configuration."
+   echo "Elevated permissions not detected, falling back to dry-run mode..."
+   dryRun=true
+fi
+
+# If the user does not want to automatically connect to ProXPN they can pass -dry-run
+while getopts ":dry-run" opt; do
+  case $opt in
+    a)
+      echo -e "\n-dry-run mode active, you will not be automatically connected.\n"
+      dryRun=true
+      ;;
+  esac
+done
+
+# Catch control-c signals to make sure we don't lose stty echo
+# if we decide to prematurely quit the script.If stty echo is lost the user
+# won't be able to see what they're typing into the terminal
+# until reset or similar destructive command is issued. It will appear as
+# if the shell is frozen or otherwise broken.
+trap ctrl_c INT
+function ctrl_c() {
+    stty echo
+    echo -e "\nProXPN OpenVPN Bash Client has been force quit. Goodbye.\n"
+    exit 1
+}
 
 PORT=443
 
@@ -108,7 +111,7 @@ EXIT_NODES[BASIC]=bny1.proxpn.com
 
 declare remote
 
-echo -e "\nWhich exit node would you like to use?"
+echo "Which exit node would you like to use?"
 
 PS3="Select an exit node:"
 select EXITNODE in ${!EXIT_NODES[@]};
@@ -116,32 +119,22 @@ do
     if [ ${EXIT_NODES[$EXITNODE]} ]; then
         remote=${EXIT_NODES[$EXITNODE]}
     else
-        echo -e "ERROR: Bad selection!"
-        exit
+        echo "ERROR: Bad selection!"
+        exit 1
     fi
     break
 done
 
-# Store the command we're about to run in a variable and tell the user about it for good measure
-# Use the auth-nocache option to ensure openvpn doesn't attempt to cache auth information in memory
+# Store the command we're about to run in a variable and use the auth-nocache option
+# to ensure OpenVPN doesn't attempt to cache auth information in memory
 COMMAND="$OPENVPN --config $OPENVPN_CONF --remote $remote $PORT --auth-user-pass $AUTH_CREDS --auth-nocache"
 
-echo -e "\nThe following command will be run:\n$COMMAND\n"
-
-# If we haven't passed -y then explicitly ask the user if we should run the command
-if [ !$allow ]; then
-    read -p "Proceed and connect? [y/n]:" -n 1 -r
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        allow=true
-    else
-        echo -e "\nTerminating by request, you are not connected.\n"
-        exit
-    fi
+# If we're in dry-run mode then print the command and exit
+if [ $dryRun = true ]; then
+    echo -e "\nDry run comeplete!"
+    echo -e "Use following OpenVPN command to connect to ProXPN :\n$COMMAND\n"
+    exit 0
 fi
 
-# If the user has said it's fine, run the command
-if [ $allow ]; then
-    echo ""
-    $COMMAND
-fi
-
+echo -e "Running: \n$COMMAND\n"
+$COMMAND
