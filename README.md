@@ -62,7 +62,10 @@ brew install openvpn
 
 ### Installing This Script
 
-To use this script clone this repo or download the source from the releases page. The recommendation is to create a `proxpn` directory in `etc` and store the included `proxpn.ovpn` file there. The script should be given execute permissions `chmod +x proxpn` and copied to somewhere in your `$PATH`. The recommendation is to copy the script to `/usr/local/bin` or `/usr/bin`. This should allow you to run the command `proxpn`.
+To use this script clone this repo or download the source from the releases page. The recommendation is to create a `proxpn` directory in `etc` and store the included `proxpn.ovpn` file there.
+The main script should be given execute permissions `chmod +x proxpn` and copied to somewhere in your `$PATH`. The recommendation is to copy the script to `/usr/local/bin` or `/usr/bin`. This should allow you to run the command `proxpn` from any location.
+
+This can now all be done using the provided installation script: `./install.sh`  
 
 ### Authentication Credentials
 
