@@ -13,6 +13,40 @@ executableSystemInstallPath="$systemInstallPath/$executableFileName";
 CREDS_FILE="login.conf";
 systemCredsFilePath="$CONF_BASE_PATH/$CREDS_FILE";
 
+# Source: https://gist.github.com/hoylen/6607180
+PROG="$(basename "$0")";
+VERSION="0.2";
+
+#----------------------------------------------------------------
+# Process command line options
+
+HELP_TEXT="Usage: $PROG [options]
+Options:
+  -f | --force        Allow overwriting existing files on system if they already exist.  Useful for at least updating login info, and for also restoring program defaults.
+  -h | --help         show this help message";
+
+overwriteFiles="false";
+   
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -h | --help)
+          echo "$HELP_TEXT";
+          exit 0;
+          ;;
+        -f | --force)
+          overwriteFiles="true";
+          ;;
+        --)
+          shift;
+          break;
+          ;; # end of options
+    esac
+    shift
+done
+
+#----------------------------------------------------------------
+# Main program flow
+
 if [ $EUID -ne 0 ]; then
    echo "This script must be run as root in order to install system-wide configuration and program link.";
    exit 1;
@@ -23,7 +57,7 @@ if [[ ! -d "$CONF_BASE_PATH" ]]; then
 fi
 
 ## Install system-wide configuration, if not already installed.
-if [[ -f "$systemConfigFilePath" ]]; then
+if [[ -f "$systemConfigFilePath" && ! "$overwriteFiles" == "true" ]]; then
   echo "System-wide configuration file already exists; continuing installation...";
 elif [[ -f "$configFilePath" ]]; then
   if cp "$configFilePath" "$systemConfigFilePath"; then
@@ -39,9 +73,12 @@ else
 fi
 
 ## Install system-wide program link, if not already installed.
-if [[ -f "$executableSystemInstallPath" ]]; then
+if [[ -f "$executableSystemInstallPath" && ! "$overwriteFiles" == "true" ]]; then
   echo "System-wide program link already exists; continuing installation...";
 elif [[ -f "$executableFilePath" ]]; then
+  if [[ -f "$executableSystemInstallPath" ]]; then
+    rm "$executableSystemInstallPath";
+  fi
   if ln -s "$(readlink -f "$executableFilePath")" "$executableSystemInstallPath"; then
     echo "Successfully installed system-wide program link.";
   else
@@ -55,7 +92,7 @@ else
 fi
 
 ## Install system-wide credentials file, if not already installed.
-if [[ -f "$systemCredsFilePath" ]]; then
+if [[ -f "$systemCredsFilePath" && ! "$overwriteFiles" == "true" ]]; then
   echo "System-wide credentials file already exists; continuing installation...";
 else
   while [[ "$storeCredentialsChoice" != "y" && "$storeCredentialsChoice" != "n" ]]; do
@@ -75,6 +112,10 @@ else
       exit 1;
     fi
   else
-    echo "Choosing to not permanently store credentials.  They will have to be entered upon successive executions of the main script.";
+    if [[ -f "$systemCredsFilePath" ]]; then
+      echo "Choosing to not overwrite permanently stored credentials.  Using existing information on system.";
+    else
+      echo "Choosing to not permanently store credentials.  They will have to be entered upon successive executions of the main script.";
+    fi
   fi
 fi
