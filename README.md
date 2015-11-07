@@ -113,7 +113,7 @@ Bash is notorious for being difficult to read and understand. For this reason th
   1. Check if openvpn is installed:
     - If it isn't, exit. 
     - If it is, store the path to the executable as the variable `OPENVPN`
-  1. Setup constants which tell the program where to find the OpenVPN config file and where to look for an optional file containing the user's ProXPN credentials (by default it checks inside `/etc/proxpn`).
+  1. Setup constants which tell the program where to find the OpenVPN config file and where to look for an optional file containing the user's ProXPN credentials (by default it checks inside `~/.proxpn`).
       - If no OpenVPN config file is found, exit. 
       - If no credentials file is found tell the user they're expected to login.
   1. Check if the command was run without `sudo` or if the flag `--dry-run`, or `--remote` was passed. 

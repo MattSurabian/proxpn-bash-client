@@ -25,8 +25,8 @@ if $OPENVPN > /dev/null; then
 fi
 
 # The recommendation is to write the ovpn file and other configuration
-# information to /etc/proxpn/
-CONF_BASE_PATH=/etc/proxpn/
+# information to ~/.proxpn/
+CONF_BASE_PATH=~/.proxpn/
 CONF_FILE=proxpn.ovpn
 
 # Ensure that the CONF_FILE exists
