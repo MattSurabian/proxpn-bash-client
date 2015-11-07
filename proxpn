@@ -67,8 +67,12 @@ case $key in
     dryRunExitCode=0
     echo -e "-dry-run mode active, you will not be automatically connected."
     ;;
+    -r|-remote|--remote)
+    shift
+    remoteName=$1
+    ;;
     *)
-    echo -e "Unknown option: $key \nUsage: proxpn [--dry-run|-dry-run]\n"
+    echo -e "Unknown option: $key \nUsage: proxpn [-r|-remote|--remote REMOTE_NAME] [--dry-run|-dry-run]\n"
     exit 1
     ;;
 esac
@@ -119,21 +123,25 @@ EXIT_NODES[Sweden]=swe1.proxpn.com
 # If however, you prefer it: bd.proxpn.com
 EXIT_NODES[BASIC]=bny1.proxpn.com
 
-declare remote
+# If a remote wasn't set via flag then prompt the user to select
+# an exit node to connect to.
+if [ ! ${remoteName} ]; then
+    echo -e "\nWhich exit node would you like to use?"
+    PS3="Select an exit node:"
+    select EXITNODE in ${!EXIT_NODES[@]};
+    do
+        remoteName=$EXITNODE
+        break
+    done
+fi
 
-echo -e "\nWhich exit node would you like to use?"
-
-PS3="Select an exit node:"
-select EXITNODE in ${!EXIT_NODES[@]};
-do
-    if [ ${EXIT_NODES[$EXITNODE]} ]; then
-        remote=${EXIT_NODES[$EXITNODE]}
-    else
-        echo "ERROR: Bad selection!"
-        exit 1
-    fi
-    break
-done
+# If the provided or selected exit node throw an error
+if [ ${EXIT_NODES[$remoteName]} ]; then
+    remote=${EXIT_NODES[$remoteName]}
+else
+    echo "ERROR: Sorry, the remote you're trying to use is not known. Matching for the remote flag value is case sensitive."
+    exit 1
+fi
 
 # Store the command we're about to run in a variable and use the auth-nocache option
 # to ensure OpenVPN doesn't attempt to cache auth information in memory
