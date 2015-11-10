@@ -14,11 +14,10 @@ Which exit node would you like to use?
 2) Sweden       6) BASIC    10) Stockholm 14) SanJose
 3) Netherlands  7) London   11) Prague
 4) Singapore    8) LA       12) Seattle
-
-Select an exit node:9
+Select an exit node (1-14): 9
 
 Running:
-/usr/bin/openvpn --config /etc/proxpn/proxpn.ovpn --remote se1.proxpn.com 443 --auth-user-pass /etc/proxpn/login.conf --auth-nocache
+/usr/local/sbin/openvpn --config "/etc/proxpn/proxpn.ovpn" --remote "ny1.proxpn.com" 443 --auth-user-pass "/etc/proxpn/login.conf" --auth-nocache
 
 ```
 
@@ -66,14 +65,18 @@ brew install Caskroom/cask/tuntap
 
 ### Installing This Script
 
-To use this script clone this repo or download the source from the releases page. The recommendation is to create a `proxpn` directory in `etc` and store the included `proxpn.ovpn` file there.
-The main script should be given execute permissions `chmod +x proxpn` and copied to somewhere in your `$PATH`. The recommendation is to copy the script to `/usr/local/bin` or `/usr/bin`. This should allow you to run the command `proxpn` from any location.
+To use this script you can either clone this repo, or download the source from the releases page.
 
-This can now all be done using the provided installation script: `./install.sh`  
+The following process, can now all be done using the provided installation script: `sudo ./install.sh`
+If you would prefer to do it manually, here are the steps:
+
+ - Create a `proxpn` directory in `etc` and store the included `proxpn.ovpn` file there.
+ - The main script should be given execute permissions `chmod +x proxpn` and copied to somewhere in your `$PATH`, for example in either `/usr/local/bin` or `/usr/bin`. This should allow you to run the command `proxpn` from any location.
+ - Optionally store authentication credentials, as mentioned in the following section.
 
 ### Authentication Credentials
 
-This script does not handle ProXPN authentication at all. When the user is prompted for their credentials that is coming entirely from `openvpn` itself. If you want to avoid entering your credentials at all you can create a file at `/etc/proxpn/login.conf` with your ProXPN username on one line and password on another. Again, this shell script does NOTHING with that file other than point OpenVPN to it. The specification for that file and the `--auth-user-pass` flag can be found in the [OpenVPN documentation](https://openvpn.net/index.php/open-source/documentation/manuals/65-openvpn-20x-manpage.html).
+When using the VPN, this script does not handle the ProXPN authentication prompt; that comes entirely from the `openvpn` program itself. If you want to avoid entering your credentials you can create a file at `/etc/proxpn/login.conf` with your ProXPN username on one line and password on another. The install script also asks if you would like to do this, so you don't need the manually work with the file.  Again, this shell script does NOTHING with that file other than point OpenVPN to it. The specification for that file and the `--auth-user-pass` flag can be found in the [OpenVPN documentation](https://openvpn.net/index.php/open-source/documentation/manuals/65-openvpn-20x-manpage.html).
 
 ### Supported Exit Nodes
 
@@ -86,7 +89,7 @@ This script supports the following ProXPN exit nodes:
   - LA
   - Netherlands
   - Singapore
-  - Longon
+  - London
   - Prague
   - Stockholm
   - SanJose
