@@ -23,15 +23,17 @@ VERSION="0.2";
 HELP_TEXT="Usage: $PROG [options]
 Options:
   -f | --force        Allow overwriting existing files on system if they already exist.  Useful for at least updating login info, and for also restoring program defaults.
+  -s | --symlink      Install the main program executable as a link to the original contained within this project, rather than copying it over into the system directory.  This may allow for simply updating the main project via source control, but be aware that changing its location may break the symlink, and would require re-installation.
   -h | --help         show this help message";
-
-overwriteFiles="false";
    
 while [ $# -gt 0 ]; do
     case "$1" in
         -h | --help)
           echo "$HELP_TEXT";
           exit 0;
+          ;;
+        -s | --symlink)
+          symlinkToMainExecutable="true";
           ;;
         -f | --force)
           overwriteFiles="true";
@@ -43,6 +45,9 @@ while [ $# -gt 0 ]; do
     esac
     shift
 done
+
+[[ -z "$overwriteFiles" ]] && overwriteFiles="false";
+[[ -z "$symlinkToMainExecutable" ]] && symlinkToMainExecutable="false";
 
 #----------------------------------------------------------------
 # Main program flow
@@ -79,11 +84,20 @@ elif [[ -f "$executableFilePath" ]]; then
   if [[ -f "$executableSystemInstallPath" ]]; then
     rm "$executableSystemInstallPath";
   fi
-  if ln -s "$(readlink -f "$executableFilePath")" "$executableSystemInstallPath"; then
-    echo "Successfully installed system-wide program link.";
+  if [[ "$symlinkToMainExecutable" == "true" ]]; then
+    if ln -s "$executableFilePath" "$executableSystemInstallPath"; then
+      echo "Successfully installed system-wide program link.";
+    else
+      echo "Error: Not able to install system-wide program link; exiting...";
+      exit 1;
+    fi
   else
-    echo "Error: Not able to install system-wide program link; exiting...";
-    exit 1;
+    if cp "$executableFilePath" "$executableSystemInstallPath"; then
+      echo "Successfully installed system-wide program file.";
+    else
+      echo "Error: Not able to install system-wide program file; exiting...";
+      exit 1;
+    fi
   fi
 else
   echo "Error: Main executable file not found in project: \"$executableFilePath\"";

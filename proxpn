@@ -131,7 +131,7 @@ COMMAND="$OPENVPN --config $OPENVPN_CONF --remote $remote $PORT --auth-user-pass
 
 # If we're in dry-run mode then print the command and exit
 if [ $dryRun = true ]; then
-    echo -e "\nDry run comeplete!"
+    echo -e "\nDry run complete!"
     echo -e "Use following OpenVPN command to connect to ProXPN :\n$COMMAND\n"
     exit 0
 fi
