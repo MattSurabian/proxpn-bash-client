@@ -75,7 +75,7 @@ For an automated installation run the included install script `./install.sh` (su
 
 ### Authentication Credentials
 
-When using the VPN, this script does not handle the ProXPN authentication prompt; that comes entirely from the `openvpn` program itself. If you want to avoid entering your credentials you can create a file at `/etc/proxpn/login.conf` with your ProXPN username on one line and password on another. The install script also asks if you would like to do this, so you don't need the manually work with the file.  Again, this shell script does NOTHING with that file other than point OpenVPN to it. The specification for that file and the `--auth-user-pass` flag can be found in the [OpenVPN documentation](https://openvpn.net/index.php/open-source/documentation/manuals/65-openvpn-20x-manpage.html).
+When using the VPN, this script does not handle the ProXPN authentication prompt; that comes entirely from the `openvpn` program itself. If you want to avoid entering your credentials you can create a file at `~/.config/proxpn/login.conf` with your ProXPN username on one line and password on another. The install script also asks if you would like to do this, so you don't need the manually work with the file.  Again, this shell script does NOTHING with that file other than point OpenVPN to it. The specification for that file and the `--auth-user-pass` flag can be found in the [OpenVPN documentation](https://openvpn.net/index.php/open-source/documentation/manuals/65-openvpn-20x-manpage.html).
 
 ### Supported Exit Nodes
 
