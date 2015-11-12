@@ -65,7 +65,7 @@ brew install Caskroom/cask/tuntap
 
 ### Installing This Script
 
-To use this script you can either clone this repo, or download the source from the releases page.
+To use this script you can either clone this repo, or download the source from the [releases page](https://github.com/MattSurabian/proxpn-bash-client/releases).
 
 The following process, can now all be done using the provided installation script: `sudo ./install.sh`
 If you would prefer to do it manually, here are the steps:
