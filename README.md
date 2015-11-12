@@ -17,7 +17,7 @@ Which exit node would you like to use?
 Select an exit node (1-14): 9
 
 Running:
-/usr/local/sbin/openvpn --config "/etc/proxpn/proxpn.ovpn" --remote "ny1.proxpn.com" 443 --auth-user-pass "/etc/proxpn/login.conf" --auth-nocache
+/usr/local/sbin/openvpn --config ~/.config/proxpn/proxpn.ovpn --remote ny1.proxpn.com 443 --auth-nocache --auth-user-pass ~/.config/proxpn/login.conf
 
 ```
 
