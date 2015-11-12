@@ -144,7 +144,7 @@ fi
 
 # Store the command we're about to run in a variable and use the auth-nocache option
 # to ensure OpenVPN doesn't attempt to cache auth information in memory
-COMMAND="$OPENVPN --config \"$OPENVPN_CONF\" --remote \"$remote\" $PORT --auth-user-pass \"$AUTH_CREDS\" --auth-nocache"
+COMMAND="$OPENVPN --config $OPENVPN_CONF --remote $remote $PORT --auth-user-pass $AUTH_CREDS --auth-nocache"
 
 # If we're in dry-run mode then print the command and exit
 if [ $dryRun = true ]; then
