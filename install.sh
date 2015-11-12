@@ -2,7 +2,7 @@
 
 SDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
 
-CONF_BASE_PATH="/etc/proxpn";
+CONF_BASE_PATH="$HOME/.config/proxpn";
 CONF_FILE="proxpn.ovpn";
 configFilePath="$SDIR/$CONF_FILE"
 systemConfigFilePath="$CONF_BASE_PATH/$CONF_FILE";
@@ -50,15 +50,9 @@ done
 [[ -z "$symlinkToMainExecutable" ]] && symlinkToMainExecutable="false";
 
 #----------------------------------------------------------------
-# Main program flow
-
-if [ $EUID -ne 0 ]; then
-   echo "This script must be run as root in order to install system-wide configuration and program link.";
-   exit 1;
-fi
 
 if [[ ! -d "$CONF_BASE_PATH" ]]; then
-  mkdir "$CONF_BASE_PATH";
+  mkdir -p "$CONF_BASE_PATH";
 fi
 
 ## Install system-wide configuration, if not already installed.

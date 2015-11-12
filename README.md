@@ -67,10 +67,9 @@ brew install Caskroom/cask/tuntap
 
 To use this script you can either clone this repo, or download the source from the [releases page](https://github.com/MattSurabian/proxpn-bash-client/releases).
 
-The following process, can now all be done using the provided installation script: `sudo ./install.sh`
-If you would prefer to do it manually, here are the steps:
+For an automated installation run the included install script `./install.sh` (sudo is not required). If you would prefer to do it manually, here's how:
 
- - Create a `proxpn` directory in `etc` and store the included `proxpn.ovpn` file there.
+ - Create a `proxpn` directory in `~/.config`: ` mkdir -p ~/.config/proxpn` and store the included `proxpn.ovpn` file there: `cp ./proxpn.ovpn ~/.config/proxpn/`. 
  - The main script should be given execute permissions `chmod +x proxpn` and copied to somewhere in your `$PATH`, for example in either `/usr/local/bin` or `/usr/bin`. This should allow you to run the command `proxpn` from any location.
  - Optionally store authentication credentials, as mentioned in the following section.
 
@@ -113,7 +112,7 @@ Bash is notorious for being difficult to read and understand. For this reason th
   1. Check if openvpn is installed:
     - If it isn't, exit. 
     - If it is, store the path to the executable as the variable `OPENVPN`
-  1. Setup constants which tell the program where to find the OpenVPN config file and where to look for an optional file containing the user's ProXPN credentials (by default it checks inside `/etc/proxpn`).
+  1. Setup constants which tell the program where to find the OpenVPN config file and where to look for an optional file containing the user's ProXPN credentials (by default it checks inside `~/.config/proxpn`).
       - If no OpenVPN config file is found, exit. 
       - If no credentials file is found tell the user they're expected to login.
   1. Check if the command was run without `sudo` or if the flag `--dry-run`, or `--remote` was passed. 
