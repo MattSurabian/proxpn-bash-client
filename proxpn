@@ -15,8 +15,8 @@
 # run it using sudo. If it is not run with sudo it will automatically use
 # dry-run mode.
 
+VERSION=3.0.0
 echo -e "\nWelcome to the ProXPN OpenVPN Bash Client!"
-echo
 
 OPENVPN=`which openvpn`
 if $OPENVPN > /dev/null; then
@@ -63,6 +63,10 @@ dryRunExitCode=0
 while [[ $# > 0 ]]; do
   key="$1"
   case $key in
+    -v|-version|--version)
+      echo -e "Version: $VERSION\n"
+      exit
+    ;;
     -dry-run|--dry-run)
       dryRun=true
       dryRunExitCode=0
