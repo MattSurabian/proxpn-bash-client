@@ -12,6 +12,7 @@ systemInstallPath="/usr/local/bin";
 executableSystemInstallPath="$systemInstallPath/$executableFileName";
 CREDS_FILE="login.conf";
 systemCredsFilePath="$CONF_BASE_PATH/$CREDS_FILE";
+configOnly="false"
 
 # Source: https://gist.github.com/hoylen/6607180
 PROG="$(basename "$0")";
@@ -32,6 +33,9 @@ while [ $# -gt 0 ]; do
           echo "$HELP_TEXT";
           exit 0;
           ;;
+        -c | --configuration)
+          configOnly="true"
+          ;;
         -s | --symlink)
           symlinkToMainExecutable="true";
           ;;
@@ -45,6 +49,13 @@ while [ $# -gt 0 ]; do
     esac
     shift
 done
+
+if [ $EUID != 0 -a $configOnly != true ]; then
+  echo "This script must be run as root in order to copy the script to $systemInstallPath."
+  echo "Falling back to configuration only mode. You must re-run this script with sudo or manually copy the proxpn script into your PATH before using the proxpn command."
+  echo
+  configOnly="true"
+fi
 
 [[ -z "$overwriteFiles" ]] && overwriteFiles="false";
 [[ -z "$symlinkToMainExecutable" ]] && symlinkToMainExecutable="false";
@@ -74,6 +85,8 @@ fi
 ## Install system-wide program link, if not already installed.
 if [[ -f "$executableSystemInstallPath" && ! "$overwriteFiles" == "true" ]]; then
   echo "System-wide program link already exists; continuing installation...";
+elif [ $configOnly == "true" ]; then
+  echo "Operating in configuration only mode. Skipping system-wide progam linking..."
 elif [[ -f "$executableFilePath" ]]; then
   if [[ -f "$executableSystemInstallPath" ]]; then
     rm "$executableSystemInstallPath";
