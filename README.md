@@ -67,7 +67,7 @@ brew install Caskroom/cask/tuntap
 
 To use this script you can either clone this repo, or download the source from the [releases page](https://github.com/MattSurabian/proxpn-bash-client/releases).
 
-For an automated installation run the included install script `./install.sh` (sudo is not required). If you would prefer to do it manually, here's how:
+For an automated installation run the included install script `sudo ./install.sh`. If you'd prefer to install this script without `sudo` you may do so, however without elevated privledges it will only setup the configuration files, leaving you responsible for copying the script somewhere in your path, like `/usr/local/bin`. If you would prefer to do the entire install manually and avoid the install script completely here's how:
 
  - Create a `proxpn` directory in `~/.config`: ` mkdir -p ~/.config/proxpn` and store the included `proxpn.ovpn` file there: `cp ./proxpn.ovpn ~/.config/proxpn/`. 
  - The main script should be given execute permissions `chmod +x proxpn` and copied to somewhere in your `$PATH`, for example in either `/usr/local/bin` or `/usr/bin`. This should allow you to run the command `proxpn` from any location.
