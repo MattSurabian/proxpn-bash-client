@@ -23,9 +23,10 @@ VERSION="0.2";
 
 HELP_TEXT="Usage: $PROG [options]
 Options:
-  -f | --force        Allow overwriting existing files on system if they already exist.  Useful for at least updating login info, and for also restoring program defaults.
-  -s | --symlink      Install the main program executable as a link to the original contained within this project, rather than copying it over into the system directory.  This may allow for simply updating the main project via source control, but be aware that changing its location may break the symlink, and would require re-installation.
-  -h | --help         show this help message";
+  -f | --force          Allow overwriting existing files on system if they already exist.  Useful for at least updating login info, and for also restoring program defaults.
+  -s | --symlink        Install the main program executable as a link to the original contained within this project, rather than copying it over into the system directory.  This may allow for simply updating the main project via source control, but be aware that changing its location may break the symlink, and would require re-installation.
+  -c | --configuration  Skip adding the script to the user's PATH and just create proxpn configuration files.
+  -h | --help           show this help message";
    
 while [ $# -gt 0 ]; do
     case "$1" in
