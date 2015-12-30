@@ -107,30 +107,30 @@ PORT=443
 
 # Hosts obtained from http://proxpn.com/updater/locations-v3.xml
 # and http://proxpn.com/updater/locations-v2.xml
+# Any of the following commented out nodes currently do not work with this script
 declare -A EXIT_NODES
-EXIT_NODES[Dallas]=d1.proxpn.com
-EXIT_NODES[NYC]=ny1.proxpn.com
+# EXIT_NODES[Dallas]=d1.proxpn.com
+# EXIT_NODES[NYC]=ny1.proxpn.com
 EXIT_NODES[Miami]=mfl1.proxpn.com
 EXIT_NODES[Chicago]=chi1.proxpn.com
 EXIT_NODES[Seattle]=se1.proxpn.com
 EXIT_NODES[LA]=la1.proxpn.com
 EXIT_NODES[Netherlands]=nl1.proxpn.com
-EXIT_NODES[Singapore]=sg1.proxpn.com
+# EXIT_NODES[Singapore]=sg1.proxpn.com
 EXIT_NODES[London]=uk1.proxpn.com
-EXIT_NODES[Prague]=cz1.proxpn.com
 EXIT_NODES[Stockholm]=swe1.proxpn.com
 EXIT_NODES[SanJose]=openvpn-cr.proxpn.com
-EXIT_NODES[Toronto]=tor1.proxpn.com
-EXIT_NODES[Montreal]=mtl1.proxpn.com
-EXIT_NODES[HongKong]=hk1.proxpn.com
-EXIT_NODES[Sydney]=au1.proxpn.com
-EXIT_NODES[Frankfurt]=de1.proxpn.com
-EXIT_NODES[NewDelhi]=ind1.proxpn.com
-EXIT_NODES[Tokyo]=jp1.proxpn.com
-EXIT_NODES[Bangkok]=th1.proxpn.com
-EXIT_NODES[Hafnarfjordur]=is1.proxpn.com
-EXIT_NODES[Zurich]=zch1.proxpn.com
-EXIT_NODES[Paris]=fr1.proxpn.com
+# EXIT_NODES[Toronto]=tor1.proxpn.com
+# EXIT_NODES[Montreal]=mtl1.proxpn.com
+# EXIT_NODES[HongKong]=hk1.proxpn.com
+# EXIT_NODES[Sydney]=au1.proxpn.com
+# EXIT_NODES[Frankfurt]=de1.proxpn.com
+# EXIT_NODES[NewDelhi]=ind1.proxpn.com
+# EXIT_NODES[Tokyo]=jp1.proxpn.com
+# EXIT_NODES[Bangkok]=th1.proxpn.com
+# EXIT_NODES[Hafnarfjordur]=is1.proxpn.com
+# EXIT_NODES[Zurich]=zch1.proxpn.com
+# EXIT_NODES[Paris]=fr1.proxpn.com
 
 # ProXPN basic account exit nodes actually send
 # users to many geo locations so there's no reason
