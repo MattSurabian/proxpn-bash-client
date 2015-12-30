@@ -1,0 +1,48 @@
+_Proxpn Nodes:_
+
+* Dallas
+	 ..* d1.proxpn.com 
+* NYC 		
+	 ..* ny1.proxpn.com
+* Miami 		
+	 ..* mfl1.proxpn.com
+* Chicago 	
+	 ..* chi1.proxpn.com
+* Seattle 	
+	 ..* se1.proxpn.com
+* LA
+	 ..* la1.proxpn.com
+* Netherlands
+	 ..* nl1.proxpn.com
+* Singapore
+	 ..* sg1.proxpn.com
+* London
+	 ..* uk1.proxpn.com
+* Prague
+	 ..* cz1.proxpn.com
+* Stockholm 
+	 ..* swe1.proxpn.com
+* SanJose	
+	 ..* openvpn-cr.proxpn.com
+* Toronto 
+	 ..* tor1.proxpn.com
+* Montreal 
+	 ..* mtl1.proxpn.com
+* HongKong 		
+	 ..* hk1.proxpn.com
+* Sydney 
+	 ..* au1.proxpn.com
+* Frankfurt 		
+	 ..* de1.proxpn.com
+* NewDelhi
+	 ..* ind1.proxpn.com
+Tokyo
+	 ..* jp1.proxpn.com
+* Bangkok:
+	 ..* th1.proxpn.com
+* Hafnarfjordur:
+	 ..* is1.proxpn.com
+* Zurich: 
+	 ..* zch1.proxpn.com
+* Paris: 
+	 ..* fr1.proxpn.com
