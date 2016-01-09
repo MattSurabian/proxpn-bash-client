@@ -80,14 +80,12 @@ When using the VPN, this script does not handle the ProXPN authentication prompt
 ### Supported Exit Nodes
 
 This script supports the following ProXPN exit nodes:
-  - Dallas
-  - NYC
+
   - Miami
   - Chicago
   - Seattle
   - LA
   - Netherlands
-  - Singapore
   - London
   - Prague
   - Stockholm
