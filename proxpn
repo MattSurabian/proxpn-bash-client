@@ -30,11 +30,15 @@ fi
 # without this check ~ would resolve to /root
 CONF_BASE_PATH=$(eval echo ~$SUDO_USER)/.config/proxpn/
 CONF_FILE=proxpn.ovpn
+CONF_FILE_UDP=proxpn-udp.ovpn
 
 # Ensure that the CONF_FILE exists
 declare OPENVPN_CONF
 if [ -e "$CONF_BASE_PATH$CONF_FILE" ]; then
   OPENVPN_CONF=$CONF_BASE_PATH$CONF_FILE
+  # This udp derived config does not have to exist as it'll be created
+  # if needed
+  OPENVPN_CONF_UDP=$CONF_BASE_PATH$CONF_FILE_UDP
 else
   echo "ERROR: No OpenVPN configuration file found at $CONF_BASE_PATH$CONF_FILE!"
   exit 1
@@ -103,6 +107,7 @@ function ctrl_c() {
   exit 1
 }
 
+# Both TCP and UDP configurations use port 443
 PORT=443
 
 # Hosts obtained from http://proxpn.com/updater/locations-v3.xml
@@ -133,6 +138,22 @@ EXIT_NODES[SanJose]=openvpn-cr.proxpn.com
 # EXIT_NODES[Zurich]=zch1.proxpn.com
 # EXIT_NODES[Paris]=fr1.proxpn.com
 
+# Tested/confirmed working UDP based exit nodes
+# All IPs taken from locations-v3.xml
+EXIT_NODES[Toronto]=162.253.128.67
+EXIT_NODES[Bucharest]=89.46.102.14
+#EXIT_NODES[Sydney]=108.61.184.22
+EXIT_NODES[HongKong]=43.251.159.25
+EXIT_NODES[Frankfurt]=50.7.88.172
+EXIT_NODES[Frankfurt2]=37.123.112.69
+EXIT_NODES[Paris]=151.236.21.12
+EXIT_NODES[Singapore]=191.101.242.121
+EXIT_NODES[Hafnarfjordur]=37.235.49.195
+EXIT_NODES[Zurich]=178.209.52.135
+EXIT_NODES[Netherlands2]=213.179.212.2
+EXIT_NODES[Netherlands3]=213.179.208.146
+
+
 # ProXPN basic account exit nodes actually send
 # users to many geo locations so there's no reason
 # to include the Dallas basic exit node too.
@@ -154,6 +175,19 @@ fi
 # If the provided or selected exit node throw an error
 if [ ${EXIT_NODES[$remoteName]} ]; then
   remote=${EXIT_NODES[$remoteName]}
+
+  # This checks if we have an IP or a hostname with "proxpn" in it.
+  # If we have an IP address, use the UDP based configuration (and
+  # write it out if it doesn't exist yet)
+  hostname_count=$(echo $remote | grep -v grep | grep -c proxpn)
+  if [ $hostname_count -eq 0 ]; then
+      # If the udp configuration doesn't exist, copy the existing
+      # configuration, changing tcp to udp
+      if [ ! -f $OPENVPN_CONF_UDP ]; then
+          cat $OPENVPN_CONF | sed 's/proto tcp/proto udp/g' > $OPENVPN_CONF_UDP
+      fi
+      OPENVPN_CONF=$OPENVPN_CONF_UDP
+  fi
 else
   echo "ERROR: Sorry, the remote \"$remoteName\" you're trying to use is not known.  Matching for the remote flag value is case sensitive."
   exit 1
