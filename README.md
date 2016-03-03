@@ -5,19 +5,35 @@
 The problem with ProXPN, is that until recently they didn't provide or maintain a Linux client, so Linux users were left to sort out how to securely connect to ProXPN's OpenVPN servers themselves or stop using the service. This repo endeavored to fix that.
 
 ```
-$ sudo proxpn
+$ proxpn
 
 Welcome to the ProXPN OpenVPN Bash Client!
+This script must be run as root in order to successfully apply network route configurati
+on.
+
+Elevated permissions not detected, falling back to dry-run mode...
+
+What protocol would you like to connect with?
+Generally, TCP is the best choice on networks prone to packet loss.
+Be advised if you don't have a paid account, you can only use the FREE UDP exit node.
+1) tcp
+2) udp
+Select a protocol to use for this connection (1-2)2
 
 Which exit node would you like to use?
-1) Chicago      5) Dallas   9) NYC        13) Miami
-2) Sweden       6) BASIC    10) Stockholm 14) SanJose
-3) Netherlands  7) London   11) Prague
-4) Singapore    8) LA       12) Seattle
-Select an exit node (1-14): 9
+1) Chicago	        7) Paris	      13) NYC		 19) HongKong
+2) Hafnarfjordur    8) Singapore      14) Netherlands2	 20) Frankfurt
+3) Toronto	        9) Zurich	      15) Seattle	 21) SanJose
+4) Netherlands	   10) Frankfurt2     16) Stockholm	 22) FREE
+5) Bucharest	   11) London	      17) Miami
+6) LA2		       12) LA	          18) Sydney
+Select an exit node (1-22): 8
 
-Running:
-/usr/local/sbin/openvpn --config ~/.config/proxpn/proxpn.ovpn --remote ny1.proxpn.com 443 --auth-nocache --auth-user-pass ~/.config/proxpn/login.conf
+Dry run complete!
+Use following OpenVPN command to connect to ProXPN:
+/usr/bin/openvpn --config /home/matt/.config/proxpn/proxpn.ovpn --remote 191.101.242.121
+ 443 udp --auth-nocache --auth-user-pass /home/matt/.config/proxpn/login.conf
+
 
 ```
 
@@ -81,17 +97,25 @@ When using the VPN, this script does not handle the ProXPN authentication prompt
 
 This script supports the following ProXPN exit nodes:
 
-  - Miami
-  - Chicago
-  - Seattle
-  - LA
-  - Netherlands
-  - London
-  - Prague
-  - Stockholm
-  - SanJose
-  - Sweden
+*TCP*
 
+```
+  1) Chicago	  5) London	   9) Stockholm	   13) SanJose
+  2) Toronto	  6) LA		   10) Miami
+  3) Netherlands  7) NYC	   11) Sydney
+  4) Frankfurt2	  8) Seattle   12) Frankfurt
+```
+
+*UDP*
+
+```
+1) Chicago	        7) Paris	      13) NYC		    19) HongKong
+2) Hafnarfjordur    8) Singapore      14) Netherlands2	20) Frankfurt
+3) Toronto	        9) Zurich	      15) Seattle	    21) SanJose
+4) Netherlands	   10) Frankfurt2     16) Stockholm	    22) FREE
+5) Bucharest	   11) London	      17) Miami
+6) LA2		       12) LA	          18) Sydney
+```
 
 ### Usage
 
@@ -100,8 +124,8 @@ If the script is run without `sudo` dry run mode is enabled, which does not atte
 
 ### Non-Interactive Mode
 
-This script typically requires interaction from the user to select an exit node to connect to, however the `--remote` flag (also: `-r`, `-remote`) allows this script to be run in non-interactive mode.
-The `--remote` flag expects the name of the exit node to connect to and is case sensitive. To automatically connect to the New York City exit node, for example, use the command: `sudo proxpn --remote NYC`.
+This script typically requires interaction from the user to select a protocol and an exit node to connect to, however the `--remote` and `--proto` flags (or: `-r`, `-remote`, `-p`, `-proto`) allows this script to be run in non-interactive mode.
+The `--proto` flag expects the name of the protocol to use (`udp` or `tcp`) and the `--remote` flag expects the case senstive name of the exit node to connect to. To automatically connect to the UDP New York City exit node, for example, use the command: `sudo proxpn --proto udp --remote NYC`.
 
 ### How does this script work?
 
@@ -115,11 +139,12 @@ Bash is notorious for being difficult to read and understand. For this reason th
       - If no credentials file is found tell the user they're expected to login.
   1. Check if the command was run without `sudo` or if the flag `--dry-run`, or `--remote` was passed. 
     - If `--dry-run` was passed, set the `dryRun` variable to `true`, causing the script to stop before attempting to open a connection to ProXPN and instead print an OpenVPN command to STDOUT.
+    - If `--proto` was passed, set the `proto` variable to the value and make sure it's valid (`tcp|udp`). If it is, proceed, if not print an error and exit.
     - If `--remote` was passed check the `exit_nodes` array to see if the specified remote exit is known. If it is, proceed, if not, print an error and exit
   1. Setup a [bash `trap`](http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_12_02.html) to catch if the user prematurely exits the script by pressing control-c.
     - If they do, make sure that `stty echo` has been called. This ensures that if user input was hidden (OpenVPN does this after prompting for a username and password) it doesn't continue to be hidden after the application is closed. This is a terminal specific issue.
-  1. Setup an array containing all of the ProXPN exit node domain names as provided by ProXPN customer support
-  1. Show the user all of the exit nodes available and ask them to choose one
+  1. Setup an array containing all of the ProXPN exit node IP addresses as provided by ProXPN manifest located at: http://proxpn.com/updater/locations-v3.xml
+  1. Show the user all of the exit nodes available given the protocol they chose and ask them to choose one
     - If their response is valid, set the remote server 
     - If it isn't, exit.
   1. If in dry run mode, print the OpenVPN command to STDOUT and exit, otherwise attempt to establish a connection to ProXPN.
@@ -128,4 +153,4 @@ Bash is notorious for being difficult to read and understand. For this reason th
 
 ### Does this work for the free edition of ProXPN?
 
-Yes, but non-paid ProXPN users will only be able to successfully connect to the rate limited `BASIC` exit node.
+Yes, but non-paid ProXPN users will only be able to successfully connect to the rate limited `FREE` UDP exit node.
