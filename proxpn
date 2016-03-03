@@ -76,6 +76,10 @@ while [[ $# > 0 ]]; do
       shift
       remoteName=$1
     ;;
+    -p|-proto|--proto)
+      shift
+      proto=$1
+    ;;
     *)
       echo -e "Unknown option: $key \nUsage: proxpn [-r|-remote|--remote REMOTE_NAME] [--dry-run|-dry-run]\n"
       exit 1
@@ -105,39 +109,77 @@ function ctrl_c() {
 
 PORT=443
 
-# Hosts obtained from http://proxpn.com/updater/locations-v3.xml
-# and http://proxpn.com/updater/locations-v2.xml
-# Any of the following commented out nodes currently do not work with this script
-declare -A EXIT_NODES
-# EXIT_NODES[Dallas]=d1.proxpn.com
-# EXIT_NODES[NYC]=ny1.proxpn.com
-EXIT_NODES[Miami]=mfl1.proxpn.com
-EXIT_NODES[Chicago]=chi1.proxpn.com
-EXIT_NODES[Seattle]=se1.proxpn.com
-EXIT_NODES[LA]=la1.proxpn.com
-EXIT_NODES[Netherlands]=nl1.proxpn.com
-# EXIT_NODES[Singapore]=sg1.proxpn.com
-EXIT_NODES[London]=uk1.proxpn.com
-EXIT_NODES[Prague]=cz1.proxpn.com
-EXIT_NODES[Stockholm]=swe1.proxpn.com
-EXIT_NODES[SanJose]=openvpn-cr.proxpn.com
-# EXIT_NODES[Toronto]=tor1.proxpn.com
-# EXIT_NODES[Montreal]=mtl1.proxpn.com
-# EXIT_NODES[HongKong]=hk1.proxpn.com
-# EXIT_NODES[Sydney]=au1.proxpn.com
-# EXIT_NODES[Frankfurt]=de1.proxpn.com
-# EXIT_NODES[NewDelhi]=ind1.proxpn.com
-# EXIT_NODES[Tokyo]=jp1.proxpn.com
-# EXIT_NODES[Bangkok]=th1.proxpn.com
-# EXIT_NODES[Hafnarfjordur]=is1.proxpn.com
-# EXIT_NODES[Zurich]=zch1.proxpn.com
-# EXIT_NODES[Paris]=fr1.proxpn.com
+declare -A PROTOCOLS
+PROTOCOLS[tcp]=tcp
+PROTOCOLS[udp]=udp
 
-# ProXPN basic account exit nodes actually send
-# users to many geo locations so there's no reason
-# to include the Dallas basic exit node too.
-# If however, you prefer it: bd.proxpn.com
-EXIT_NODES[BASIC]=bny1.proxpn.com
+# Setup Single Exit Node array populated based on protocol chosen
+declare -A EXIT_NODES
+
+# IPs obtained from http://proxpn.com/updater/locations-v3.xml
+declare -A TCP_EXIT_NODES
+declare -A UDP_EXIT_NODES
+
+TCP_EXIT_NODES[NYC]=196.52.17.0
+TCP_EXIT_NODES[Miami]=192.240.98.3
+TCP_EXIT_NODES[Seattle]=50.7.74.99
+TCP_EXIT_NODES[Chicago]=50.7.1.243
+TCP_EXIT_NODES[Toronto]=162.253.128.69
+TCP_EXIT_NODES[LA]=64.27.29.67
+TCP_EXIT_NODES[Netherlands]=213.179.213.2
+TCP_EXIT_NODES[Stockholm]=94.185.84.34
+TCP_EXIT_NODES[London]=78.157.207.131
+TCP_EXIT_NODES[Sydney]=45.32.241.118
+TCP_EXIT_NODES[Frankfurt]=50.7.89.131
+TCP_EXIT_NODES[Frankfurt2]=37.123.112.35
+TCP_EXIT_NODES[SanJose]=179.48.248.104
+
+UDP_EXIT_NODES[FREE]=196.52.21.65
+UDP_EXIT_NODES[NYC]=196.52.16.2
+UDP_EXIT_NODES[Miami]=196.52.22.2
+UDP_EXIT_NODES[Seattle]=196.52.18.2
+UDP_EXIT_NODES[Chicago]=50.7.1.67
+UDP_EXIT_NODES[Toronto]=162.253.128.67
+UDP_EXIT_NODES[HongKong]=43.251.159.25
+UDP_EXIT_NODES[LA]=64.27.29.74
+UDP_EXIT_NODES[LA2]=64.27.29.70
+UDP_EXIT_NODES[Netherlands]=213.179.212.2
+UDP_EXIT_NODES[Netherlands2]=213.179.208.146
+UDP_EXIT_NODES[Stockholm]=94.185.84.48
+UDP_EXIT_NODES[London]=78.157.207.139
+UDP_EXIT_NODES[Bucharest]=89.46.102.14
+UDP_EXIT_NODES[Sydney]=108.61.184.22
+UDP_EXIT_NODES[Frankfurt]=50.7.88.172
+UDP_EXIT_NODES[Frankfurt2]=37.123.112.69
+UDP_EXIT_NODES[Paris]=151.236.21.12
+UDP_EXIT_NODES[Singapore]=191.101.242.121
+UDP_EXIT_NODES[SanJose]=179.48.248.105
+UDP_EXIT_NODES[Hafnarfjordur]=37.235.49.195
+UDP_EXIT_NODES[Zurich]=178.209.52.135
+
+if [ ! ${proto} ]; then
+  echo -e "\nWhat protocol would you like to connect with? \nGenerally, TCP is the best choice on networks prone to packet loss.\nBe advised if you don't have a paid account, you can only use the FREE UDP exit node."
+  PS3="Select a protocol to use for this connection (1-${#PROTOCOLS[@]})"
+  select PROTOCOL in ${PROTOCOLS[@]};
+  do
+    proto=$PROTOCOL
+    break
+  done
+fi
+
+# If the provided or selected protocol is unknown throw an error
+if [ ! ${PROTOCOLS[$proto]} ]; then
+  echo "ERROR: Sorry, the protocol \"$proto\" you're trying to use is not known. Matching is case sensitive and only tcp or udp are supported."
+  exit 1
+elif [ $proto = 'tcp' ]; then
+    for i in ${!TCP_EXIT_NODES[@]}; do
+        EXIT_NODES[$i]="${TCP_EXIT_NODES[$i]}"
+    done
+else
+    for i in ${!UDP_EXIT_NODES[@]}; do
+        EXIT_NODES[$i]="${UDP_EXIT_NODES[$i]}"
+    done
+fi
 
 # If a remote wasn't set via flag then prompt the user to select
 # an exit node to connect to.
@@ -161,7 +203,7 @@ fi
 
 # Store the command we're about to run in a variable and use the auth-nocache option
 # to ensure OpenVPN doesn't attempt to cache auth information in memory
-COMMAND="$OPENVPN --config $OPENVPN_CONF --remote $remote $PORT --auth-nocache --auth-user-pass $AUTH_CREDS"
+COMMAND="$OPENVPN --config $OPENVPN_CONF --remote $remote $PORT $proto --auth-nocache --auth-user-pass $AUTH_CREDS"
 
 # If we're in dry-run mode then print the command and exit
 if [ $dryRun = true ]; then
