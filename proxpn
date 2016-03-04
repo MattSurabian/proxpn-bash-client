@@ -7,8 +7,8 @@
 # This script relies on an OpenVPN configuration file which can be 
 # extracted from ProXPNs software.
 #
-# Use of this script for any exit nodes other than BASIC requires a
-# paid ProXPN account. The BASIC endpoint is rate limited, and a
+# Use of this script for any exit nodes other than udp FREE requires a
+# paid ProXPN account. The FREE udp endpoint is rate limited, and a
 # paid subscription is relatively cheap.
 #
 # Because this command runs a VPN for all your traffic you'll have to
