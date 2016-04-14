@@ -81,7 +81,7 @@ while [[ $# > 0 ]]; do
       proto=$1
     ;;
     *)
-      echo -e "Unknown option: $key \nUsage: proxpn [-r|-remote|--remote REMOTE_NAME] [--dry-run|-dry-run]\n"
+      echo -e "Unknown option: $key \nUsage: proxpn [-r|-remote|--remote REMOTE_NAME] [-p|-proto|--proto PROTOCOL] [--dry-run|-dry-run]\n"
       exit 1
     ;;
   esac
