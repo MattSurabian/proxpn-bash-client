@@ -21,19 +21,18 @@ Be advised if you don't have a paid account, you can only use the FREE UDP exit 
 Select a protocol to use for this connection (1-2)2
 
 Which exit node would you like to use?
-1) Chicago	        7) Paris	      13) NYC		 19) HongKong
-2) Hafnarfjordur    8) Singapore      14) Netherlands2	 20) Frankfurt
-3) Toronto	        9) Zurich	      15) Seattle	 21) SanJose
-4) Netherlands	   10) Frankfurt2     16) Stockholm	 22) FREE
-5) Bucharest	   11) London	      17) Miami
-6) LA2		       12) LA	          18) Sydney
-Select an exit node (1-22): 8
+1) Chicago          8) HongKong3      15) LA             22) Sydney
+2) Hafnarfjordur    9) HongKong2      16) NYC            23) HongKong
+3) Toronto         10) Zurich         17) Netherlands2   24) Chicago2
+4) Netherlands     11) Frankfurt3     18) NYC2           25) Frankfurt
+5) Bucharest       12) Frankfurt2     19) Seattle        26) Seattle2
+6) Paris           13) London         20) Stockholm      27) SanJose
+7) Singapore       14) Miami2         21) Miami          28) FREE
+Select an exit node (1-28): 8
 
 Dry run complete!
 Use following OpenVPN command to connect to ProXPN:
-/usr/bin/openvpn --config /home/matt/.config/proxpn/proxpn.ovpn --remote 191.101.242.121
- 443 udp --auth-nocache --auth-user-pass /home/matt/.config/proxpn/login.conf
-
+/usr/sbin/openvpn --config /home/matt/.config/proxpn/proxpn.ovpn --remote 103.194.43.26 443 udp --auth-nocache --auth-user-pass /home/matt/.config/proxpn/login.conf
 
 ```
 
@@ -100,21 +99,22 @@ This script supports the following ProXPN exit nodes:
 *TCP*
 
 ```
-  1) Chicago	  5) London	   9) Stockholm	   13) SanJose
-  2) Toronto	  6) LA		   10) Miami
-  3) Netherlands  7) NYC	   11) Sydney
-  4) Frankfurt2	  8) Seattle   12) Frankfurt
+1) Chicago      4) Frankfurt2  7) Seattle     10) Sydney
+2) Toronto      5) London      8) Stockholm   11) Frankfurt
+3) Netherlands  6) NYC         9) Miami       12) SanJose
+
 ```
 
 *UDP*
 
 ```
-1) Chicago	        7) Paris	      13) NYC		    19) HongKong
-2) Hafnarfjordur    8) Singapore      14) Netherlands2	20) Frankfurt
-3) Toronto	        9) Zurich	      15) Seattle	    21) SanJose
-4) Netherlands	   10) Frankfurt2     16) Stockholm	    22) FREE
-5) Bucharest	   11) London	      17) Miami
-6) LA2		       12) LA	          18) Sydney
+1) Chicago          8) HongKong3      15) LA           22) Sydney
+2) Hafnarfjordur    9) HongKong2      16) NYC          23) HongKong
+3) Toronto         10) Zurich         17) Netherlands2 24) Chicago2
+4) Netherlands     11) Frankfurt3     18) NYC2         25) Frankfurt
+5) Bucharest       12) Frankfurt2     19) Seattle      26) Seattle2
+6) Paris           13) London         20) Stockholm    27) SanJose
+7) Singapore       14) Miami2         21) Miami        28) FREE
 ```
 
 ### Usage
