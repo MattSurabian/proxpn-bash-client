@@ -1,0 +1,11 @@
+Package: proxpn
+Version: 4.0.2
+Architecture: all
+Maintainer: mattsurabian
+Installed-Size: 6
+Depends: bash
+Section: Network
+Priority: optional
+Homepage: https://github.com/mattsurabian/proxpn-bash-client
+Description: A minimal command-line based ProXPN OpenVPN client that is 
+compatible with Linux and OS X.
