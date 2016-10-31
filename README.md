@@ -50,6 +50,12 @@ The official repositories have OpenVPN available so install it!
 apt-get install openvpn
 ```
 
+**Fedora**
+
+```
+sudo dnf install openvpn
+```
+
 **RPM**
 
 The official repositories have OpenVPN available so install it!
