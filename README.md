@@ -8,9 +8,7 @@ The problem with ProXPN, is that until recently they didn't provide or maintain 
 $ proxpn
 
 Welcome to the ProXPN OpenVPN Bash Client!
-This script must be run as root in order to successfully apply network route configurati
-on.
-
+This script must be run as root in order to successfully apply network route configuration.
 Elevated permissions not detected, falling back to dry-run mode...
 
 What protocol would you like to connect with?
@@ -18,7 +16,7 @@ Generally, TCP is the best choice on networks prone to packet loss.
 Be advised if you don't have a paid account, you can only use the FREE UDP exit node.
 1) tcp
 2) udp
-Select a protocol to use for this connection (1-2)2
+Select a protocol to use for this connection (1-2): 2
 
 Which exit node would you like to use?
 1) Chicago          8) HongKong3      15) LA             22) Sydney
@@ -28,11 +26,13 @@ Which exit node would you like to use?
 5) Bucharest       12) Frankfurt2     19) Seattle        26) Seattle2
 6) Paris           13) London         20) Stockholm      27) SanJose
 7) Singapore       14) Miami2         21) Miami          28) FREE
+
 Select an exit node (1-28): 8
 
 Dry run complete!
 Use following OpenVPN command to connect to ProXPN:
 /usr/sbin/openvpn --config /home/matt/.config/proxpn/proxpn.ovpn --remote 103.194.43.26 443 udp --auth-nocache --auth-user-pass /home/matt/.config/proxpn/login.conf
+
 
 ```
 
@@ -48,6 +48,12 @@ The official repositories have OpenVPN available so install it!
 
 ```
 apt-get install openvpn
+```
+
+**Fedora**
+
+```
+sudo dnf install openvpn
 ```
 
 **RPM**

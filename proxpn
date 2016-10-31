@@ -164,7 +164,7 @@ UDP_EXIT_NODES[Zurich]=178.209.52.135
 
 if [ ! ${proto} ]; then
   echo -e "\nWhat protocol would you like to connect with? \nGenerally, TCP is the best choice on networks prone to packet loss.\nBe advised if you don't have a paid account, you can only use the FREE UDP exit node."
-  PS3="Select a protocol to use for this connection (1-${#PROTOCOLS[@]})"
+  PS3="Select a protocol to use for this connection (1-${#PROTOCOLS[@]}): "
   select PROTOCOL in ${PROTOCOLS[@]};
   do
     proto=$PROTOCOL
