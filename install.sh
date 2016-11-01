@@ -2,16 +2,16 @@
 
 SDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
 
-CONF_BASE_PATH="$HOME/.config/proxpn";
-CONF_FILE="proxpn.ovpn";
-configFilePath="$SDIR/$CONF_FILE"
-systemConfigFilePath="$CONF_BASE_PATH/$CONF_FILE";
+configRoot="$HOME/.config/proxpn";
+configFileName="proxpn.ovpn";
+configFilePath="$SDIR/$configFileName"
+userConfigFilePath="$configRoot/$configFileName";
 executableFileName="proxpn";
 executableFilePath="$SDIR/$executableFileName";
 systemInstallPath="/usr/local/bin";
 executableSystemInstallPath="$systemInstallPath/$executableFileName";
-CREDS_FILE="login.conf";
-systemCredsFilePath="$CONF_BASE_PATH/$CREDS_FILE";
+userCredsFileName="login.conf";
+userCredsFilePath="$configRoot/$userCredsFileName";
 configOnly="false"
 
 # Source: https://gist.github.com/hoylen/6607180
@@ -63,22 +63,22 @@ fi
 
 #----------------------------------------------------------------
 
-if [[ ! -d "$CONF_BASE_PATH" ]]; then
-  mkdir -p "$CONF_BASE_PATH";
+if [[ ! -d "$configRoot" ]]; then
+  mkdir -p "$configRoot";
 fi
 
 ## Install system-wide configuration, if not already installed.
-if [[ -f "$systemConfigFilePath" && ! "$overwriteFiles" == "true" ]]; then
+if [[ -f "$userConfigFilePath" && ! "$overwriteFiles" == "true" ]]; then
   echo "System-wide configuration file already exists; continuing installation...";
 elif [[ -f "$configFilePath" ]]; then
-  if cp "$configFilePath" "$systemConfigFilePath"; then
+  if cp "$configFilePath" "$userConfigFilePath"; then
     echo "Successfully installed system-wide configuration file.";
   else
     echo "Error: Not able to install system-wide configuration file; exiting...";
     exit 1;
   fi
 else
-  echo "Error: OpenVPN configuration file not found in project: \"$SDIR/$CONF_FILE\"";
+  echo "Error: OpenVPN configuration file not found in project: \"$SDIR/$configFileName\"";
   echo "Exiting...";
   exit 1;
 fi
@@ -114,7 +114,7 @@ else
 fi
 
 ## Install system-wide credentials file, if not already installed.
-if [[ -f "$systemCredsFilePath" && ! "$overwriteFiles" == "true" ]]; then
+if [[ -f "$userCredsFilePath" && ! "$overwriteFiles" == "true" ]]; then
   echo "System-wide credentials file already exists; continuing installation...";
 else
   while [[ "$storeCredentialsChoice" != "y" && "$storeCredentialsChoice" != "n" ]]; do
@@ -123,10 +123,11 @@ else
   if [[ "$storeCredentialsChoice" == "y" ]]; then
     read -p "Username: " username;
     read -s -p "Password: " password;
-    if echo -e "$username\n$password" > "$systemCredsFilePath"; then
+    if echo -e "$username\n$password" > "$userCredsFilePath"; then
       echo "Successfully installed system-wide credentials file.";
       unset username;
       unset password;
+      chmod 600 "$userCredsFilePath";
     else
       echo "Error: Not able to install system-wide credentials file; exiting...";
       unset username;
@@ -134,7 +135,7 @@ else
       exit 1;
     fi
   else
-    if [[ -f "$systemCredsFilePath" ]]; then
+    if [[ -f "$userCredsFilePath" ]]; then
       echo "Choosing to not overwrite permanently stored credentials.  Using existing information on system.";
     else
       echo "Choosing to not permanently store credentials.  They will have to be entered upon successive executions of the main script.";
