@@ -2,7 +2,7 @@
 
 SDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
 
-configRoot="$HOME/.config/proxpn";
+configRoot=$(eval echo ~$SUDO_USER)/.config/proxpn/;
 configFileName="proxpn.ovpn";
 configFilePath="$SDIR/$configFileName"
 userConfigFilePath="$configRoot/$configFileName";
@@ -68,11 +68,12 @@ if [[ ! -d "$configRoot" ]]; then
 fi
 
 ## Install system-wide configuration, if not already installed.
+echo "Attempting to install configuration file to: $userConfigFilePath"
 if [[ -f "$userConfigFilePath" && ! "$overwriteFiles" == "true" ]]; then
-  echo "System-wide configuration file already exists; continuing installation...";
+  echo "Configuration file already exists; continuing installation...";
 elif [[ -f "$configFilePath" ]]; then
   if cp "$configFilePath" "$userConfigFilePath"; then
-    echo "Successfully installed system-wide configuration file.";
+    echo "Successfully installed configuration file.";
   else
     echo "Error: Not able to install system-wide configuration file; exiting...";
     exit 1;
@@ -84,6 +85,7 @@ else
 fi
 
 ## Install system-wide program link, if not already installed.
+echo "Attempting to install executable to: $executableSystemInstallPath"
 if [[ -f "$executableSystemInstallPath" && ! "$overwriteFiles" == "true" ]]; then
   echo "System-wide program link already exists; continuing installation...";
 elif [ $configOnly == "true" ]; then
@@ -114,6 +116,7 @@ else
 fi
 
 ## Install system-wide credentials file, if not already installed.
+echo "Attempting to install credentials file to: $userCredsFilePath"
 if [[ -f "$userCredsFilePath" && ! "$overwriteFiles" == "true" ]]; then
   echo "System-wide credentials file already exists; continuing installation...";
 else
