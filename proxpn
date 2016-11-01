@@ -15,7 +15,7 @@
 # run it using sudo. If it is not run with sudo it will automatically use
 # dry-run mode.
 
-VERSION=4.0.2
+VERSION=4.0.3
 echo -e "\nWelcome to the ProXPN OpenVPN Bash Client!"
 
 OPENVPN=`which openvpn`
