@@ -12,11 +12,14 @@ systemInstallPath="/usr/local/bin";
 executableSystemInstallPath="$systemInstallPath/$executableFileName";
 CREDS_FILE="login.conf";
 systemCredsFilePath="$CONF_BASE_PATH/$CREDS_FILE";
-configOnly="false"
+exitNodesFileName="exit_nodes.sh";
+exitNodesSourceFilePath="$SDIR/$exitNodesFileName";
+exitNodesDestFilePath="$CONF_BASE_PATH/$exitNodesFileName";
+configOnly="false";
 
 # Source: https://gist.github.com/hoylen/6607180
 PROG="$(basename "$0")";
-VERSION="0.2";
+VERSION="1.2";
 
 #----------------------------------------------------------------
 # Process command line options
@@ -35,7 +38,7 @@ while [ $# -gt 0 ]; do
           exit 0;
           ;;
         -c | --configuration)
-          configOnly="true"
+          configOnly="true";
           ;;
         -s | --symlink)
           symlinkToMainExecutable="true";
@@ -52,10 +55,10 @@ while [ $# -gt 0 ]; do
 done
 
 if [ $EUID != 0 -a $configOnly != true ]; then
-  echo "This script must be run as root in order to copy the script to $systemInstallPath."
-  echo "Falling back to configuration only mode. You must re-run this script with sudo or manually copy the proxpn script into your PATH before using the proxpn command."
-  echo
-  configOnly="true"
+  echo "This script must be run as root in order to copy the script to $systemInstallPath.";
+  echo "Falling back to configuration only mode. You must re-run this script with sudo or manually copy the proxpn script into your PATH before using the proxpn command.";
+  echo;
+  configOnly="true";
 fi
 
 [[ -z "$overwriteFiles" ]] && overwriteFiles="false";
@@ -67,7 +70,7 @@ if [[ ! -d "$CONF_BASE_PATH" ]]; then
   mkdir -p "$CONF_BASE_PATH";
 fi
 
-## Install system-wide configuration, if not already installed.
+## Install system-wide configuration, if not already installed, or 'forced' to.
 if [[ -f "$systemConfigFilePath" && ! "$overwriteFiles" == "true" ]]; then
   echo "System-wide configuration file already exists; continuing installation...";
 elif [[ -f "$configFilePath" ]]; then
@@ -78,12 +81,12 @@ elif [[ -f "$configFilePath" ]]; then
     exit 1;
   fi
 else
-  echo "Error: OpenVPN configuration file not found in project: \"$SDIR/$CONF_FILE\"";
+  echo "Error: OpenVPN configuration file not found in project: \"$configFilePath\"";
   echo "Exiting...";
   exit 1;
 fi
 
-## Install system-wide program link, if not already installed.
+## Install system-wide program link, if not already installed, or 'forced' to.
 if [[ -f "$executableSystemInstallPath" && ! "$overwriteFiles" == "true" ]]; then
   echo "System-wide program link already exists; continuing installation...";
 elif [ $configOnly == "true" ]; then
@@ -113,7 +116,7 @@ else
   exit 1;
 fi
 
-## Install system-wide credentials file, if not already installed.
+## Install credentials file, if not already installed, or 'forced' to.
 if [[ -f "$systemCredsFilePath" && ! "$overwriteFiles" == "true" ]]; then
   echo "System-wide credentials file already exists; continuing installation...";
 else
@@ -140,4 +143,20 @@ else
       echo "Choosing to not permanently store credentials.  They will have to be entered upon successive executions of the main script.";
     fi
   fi
+fi
+
+## Install exit nodes list file, if not already installed, or 'forced' to.
+if [[ -f "$exitNodesDestFilePath" && ! "$overwriteFiles" == "true" ]]; then
+  echo "Exit nodes list file already exists; continuing installation...";
+elif [[ -f "$exitNodesSourceFilePath" ]]; then
+  if cp "$exitNodesSourceFilePath" "$exitNodesDestFilePath"; then
+    echo "Successfully installed exit nodes list file.";
+  else
+    echo "Error: Not able to install exit nodes list file; exiting...";
+    exit 1;
+  fi
+else
+  echo "Error: Exit nodes list file not found in project: \"$exitNodesDestFilePath\"";
+  echo "Exiting...";
+  exit 1;
 fi

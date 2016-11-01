@@ -118,7 +118,7 @@ PROTOCOLS[udp]=udp
 # Setup Single Exit Node array populated based on protocol chosen
 declare -A EXIT_NODES
 
-source "$SDIR/exit_nodes.sh";
+source "$CONF_BASE_PATH/exit_nodes.sh";
 
 if [ ! ${proto} ]; then
   echo -e "\nWhat protocol would you like to connect with? \nGenerally, TCP is the best choice on networks prone to packet loss.\nBe advised if you don't have a paid account, you can only use the FREE UDP exit node."
