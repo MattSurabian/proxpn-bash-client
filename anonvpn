@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+# AnonVPN.io OpenVPN Bash Client
+# @see: https://github.com/MattSurabian/proxpn-bash-client/
+#
+# If you want to use AnonVPN's service but don't want to or are unable
+# to install their software, this script might be what you need.
+# This script relies on an OpenVPN configuration file which can be 
+# extracted from AnonVPNs software.
+#
+# Use of this script for any exit nodes other than BASIC requires a
+# paid AnonVPN account. The BASIC endpoint is rate limited, and a
+# paid subscription is relatively cheap.
+#
+# Because this command runs a VPN for all your traffic you'll have to
+# run it using sudo. If it is not run with sudo it will automatically use
+# dry-run mode.
+
+VERSION=3.0.0
+echo -e "\nWelcome to the AnonVPN OpenVPN Bash Client!"
+
+OPENVPN=`which openvpn`
+if $OPENVPN > /dev/null; then
+  echo -e "\nOpenVPN not found! It must be installed before proceeding\n"
+  exit 1
+fi
+
+# The recommendation is to write the ovpn file and other configuration
+# information to ~/.config/proxpn/ since this script needs to be run as
+# sudo in order to work we need to eval the home directory of the actual user
+# without this check ~ would resolve to /root
+CONF_BASE_PATH=$(eval echo ~$SUDO_USER)/.config/anonvpn/
+CONF_FILE=anonvpn.ovpn
+
+# Ensure that the CONF_FILE exists
+declare OPENVPN_CONF
+if [ -e "$CONF_BASE_PATH$CONF_FILE" ]; then
+  OPENVPN_CONF=$CONF_BASE_PATH$CONF_FILE
+else
+  echo "ERROR: No OpenVPN configuration file found at $CONF_BASE_PATH$CONF_FILE!"
+  exit 1
+fi
+
+# By default the user will be prompted for their AnonVPN username and password by
+# OpenVPN. To avoid being prompted, an auth file containing two lines with the username
+# on the first line and the password on the second line can be created. The
+# recommendation is to call this file login.conf and store it in $CONF_BASE_PATH.
+# If this file is not found, it will not be used and the user will be prompted
+# for login credentials.
+CREDS_FILE=login.conf
+
+declare AUTH_CREDS
+if [ -e "$CONF_BASE_PATH$CREDS_FILE" ]; then
+    AUTH_CREDS=$CONF_BASE_PATH$CREDS_FILE
+else
+    echo "No credentials file found at $CONF_BASE_PATH$CREDS_FILE, you will be prompted by OpenVPN to login to AnonVPN"
+fi
+
+# By default automatically connect to AnonVPN when running this script
+dryRun=false
+dryRunExitCode=0
+
+# Check for flags
+while [[ $# > 0 ]]; do
+  key="$1"
+  case $key in
+    -v|-version|--version)
+      echo -e "Version: $VERSION\n"
+      exit
+    ;;
+    -dry-run|--dry-run)
+      dryRun=true
+      dryRunExitCode=0
+      echo -e "-dry-run mode active, you will not be automatically connected."
+    ;;
+    -r|-remote|--remote)
+      shift
+      remoteName=$1
+    ;;
+    *)
+      echo -e "Unknown option: $key \nUsage: anonvpn [-r|-remote|--remote REMOTE_NAME] [--dry-run|-dry-run]\n"
+      exit 1
+    ;;
+  esac
+  shift # past argument or value
+done
+
+if [ $EUID != 0 -a $dryRun != true ]; then
+  echo "This script must be run as root in order to successfully apply network route configuration."
+  echo "Elevated permissions not detected, falling back to dry-run mode..."
+  dryRun=true
+  dryRunExitCode=1
+fi
+
+# Catch control-c signals to make sure we don't lose stty echo
+# if we decide to prematurely quit the script.If stty echo is lost the user
+# won't be able to see what they're typing into the terminal
+# until reset or similar destructive command is issued. It will appear as
+# if the shell is frozen or otherwise broken.
+trap ctrl_c INT
+function ctrl_c() {
+  stty echo
+  echo -e "\nAnonVPN OpenVPN Bash Client has been force quit.  Goodbye.\n"
+  exit 1
+}
+
+# Both TCP and UDP configurations use port 443
+PORT=443
+
+# Hosts obtained from OS X binary image at:
+# AnonVPN.app/Contents/Resources/locations-anon-v2.xml
+declare -A EXIT_NODES
+EXIT_NODES[NewYork]=196.52.17.193
+EXIT_NODES[Seattle]=196.52.19.193
+EXIT_NODES[Chicago]=196.52.21.193
+EXIT_NODES[Miami]=196.52.23.193
+EXIT_NODES[Toronto]=199.189.26.32
+EXIT_NODES[Prague]=185.41.141.153
+
+
+# If a remote wasn't set via flag then prompt the user to select
+# an exit node to connect to.
+if [ ! ${remoteName} ]; then
+  echo -e "\nWhich exit node would you like to use?"
+  PS3="Select an exit node (1-${#EXIT_NODES[@]}): "
+  select EXITNODE in ${!EXIT_NODES[@]};
+  do
+      remoteName=$EXITNODE
+      break
+  done
+fi
+
+# If the provided or selected exit node throw an error
+if [ ${EXIT_NODES[$remoteName]} ]; then
+  remote=${EXIT_NODES[$remoteName]}
+else
+  echo "ERROR: Sorry, the remote \"$remoteName\" you're trying to use is not known.  Matching for the remote flag value is case sensitive."
+  exit 1
+fi
+
+# Store the command we're about to run in a variable and use the auth-nocache option
+# to ensure OpenVPN doesn't attempt to cache auth information in memory
+COMMAND="$OPENVPN --config $OPENVPN_CONF --remote $remote $PORT --auth-nocache --auth-user-pass $AUTH_CREDS"
+
+# If we're in dry-run mode then print the command and exit
+if [ $dryRun = true ]; then
+  echo -e "\nDry run complete!"
+  echo -e "Use following OpenVPN command to connect to AnonVPN:\n$COMMAND\n"
+  exit $dryRunExitCode
+fi
+
+echo -e "\nRunning:\n$COMMAND\n"
+$COMMAND
