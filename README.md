@@ -38,7 +38,7 @@ Use following OpenVPN command to connect to ProXPN:
 
 ### Prerequisites
 
-Because this repo is designed to enable secure and private communications, dependencies have been kept to an absolute minimum. All that is required to use this shell script is `openvpn` itself, and of course a ProXPN account. 
+Because this repo is designed to enable secure and private communications, dependencies have been kept to an absolute minimum. All that is required to use this shell script is `openvpn` itself, `bash` 4+ (this project uses associative arrays), and of course a ProXPN account. 
 
 It's likely your system's package manager knows how to get and install `openvpn` already. [More details about installing `openvpn` can be found here](https://openvpn.net/index.php/open-source/documentation/howto.html#install).
 
@@ -82,6 +82,12 @@ brew install openvpn
 **Note:** Mac uses may, upon receiving a build error mentioning not being able to use *unsigned kexts*, have to install another package in order to install openvpn, which can be done with the following command:
 ```
 brew install Caskroom/cask/tuntap
+```
+
+**Note:** Mac users also may run into Bash errors due to OS X shipping with an old version of Bash by default. You can also update this with homebrew:
+
+```
+brew install bash
 ```
 
 ### Installing This Script
