@@ -8,7 +8,7 @@ configFilePath="$SDIR/$configFileName"
 userConfigFilePath="$configRoot/$configFileName";
 executableFileName="proxpn";
 executableFilePath="$SDIR/$executableFileName";
-systemInstallPath="/usr/local/bin";
+systemInstallPath="/usr/sbin";
 executableSystemInstallPath="$systemInstallPath/$executableFileName";
 userCredsFileName="login.conf";
 userCredsFilePath="$configRoot/$userCredsFileName";
@@ -16,7 +16,7 @@ configOnly="false"
 
 # Source: https://gist.github.com/hoylen/6607180
 PROG="$(basename "$0")";
-VERSION="0.2";
+VERSION="1.0";
 
 #----------------------------------------------------------------
 # Process command line options
@@ -86,6 +86,19 @@ fi
 
 ## Install system-wide program link, if not already installed.
 echo "Attempting to install executable to: $executableSystemInstallPath"
+
+## Remove old executable from the previous install if it exists to prevent
+## multiple executables in someone's path
+if [[ -f "/usr/local/bin/$executableFileName" ]]; then
+  echo "Old version detected in former default install location: /usr/local/bin"
+  if [ $configOnly == "true" ]; then
+    echo "[WARNING] Operating in configuration only mode, cannot remove old version from /usr/local/bin you should delete it manually by running: rm /usr/local/bin/proxpn"
+  else
+    echo "Removing old executable from the default location: /usr/local/bin"
+    rm /usr/local/bin/$executableFileName
+  fi
+fi
+
 if [[ -f "$executableSystemInstallPath" && ! "$overwriteFiles" == "true" ]]; then
   echo "System-wide program link already exists; continuing installation...";
 elif [ $configOnly == "true" ]; then
